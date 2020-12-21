@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2017 Joseph W. Metcalf
 #
@@ -45,7 +45,7 @@ def time_str(x, type='hour'):
     
 def get_length(TTTT):
     hh,mm=TTTT[:2],TTTT[2:]  
-    return ' '.join(filter(None, (time_str(int(hh)), time_str(int(mm), type='minute'))))
+    return ' '.join([_f for _f in (time_str(int(hh)), time_str(int(mm), type='minute')) if _f])
 
 def county_decode(input, COUNTRY):
     """Convert SAME county/geographic code to text list"""
@@ -59,7 +59,7 @@ def county_decode(input, COUNTRY):
             county='ALL'
         else:
             county=defs.US_SAME_CODE[SSCCC]
-        return [' '.join(filter(None, (SAME__LOC[P], county))), defs.US_SAME_AREA[SS]]
+        return [' '.join([_f for _f in (SAME__LOC[P], county) if _f]), defs.US_SAME_AREA[SS]]
     else:
         if CCC=='000':
             county='ALL'
@@ -168,7 +168,7 @@ def clean_msg(same):
     if msgidx != -1:
         same=same[msgidx:]                                              # Left Offset 
     same = ''.join(same.split())                                        # Remove whitespace
-    same = ''.join(filter(lambda x: x in valid_chars, same))       # Valid ASCII codes only
+    same = ''.join([x for x in same if x in valid_chars])       # Valid ASCII codes only
     slen= len(same)-1
     if same[slen] !='-':
         ridx=same.rfind('-') 
@@ -314,7 +314,7 @@ def main():
                 logging.error(detail)
                 return
         while True:
-            line = source_process.stdout.readline()
+            line = source_process.stdout.readline().decode("utf-8")
             if line:
                 logging.debug(line)
                 same_decode(line, args.lang, same_watch=args.same, event_watch=args.event, text=args.text, call=args.call, command=args.command, jsonfile=args.json)
